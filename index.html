@@ -590,12 +590,15 @@
   </form>
 </div>
 
-<!-- Result Modal -->
+<!-- Success Modal -->
 <div class="modal-overlay" id="resultModal" onclick="closeModal(event)">
   <div class="modal-box">
-    <div class="modal-subtitle">SB 350 Clean Energy Program — Result</div>
-    <div class="modal-icon" id="modalIcon"></div>
-    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-icon">✅</div>
+    <div class="modal-title">Application Submitted!</div>
+    <div class="modal-body">
+      Your application has been received.<br />
+      Please allow <strong>15–25 minutes</strong> for a response.
+    </div>
     <button class="modal-close" onclick="document.getElementById('resultModal').classList.remove('open')">OK</button>
   </div>
 </div>
@@ -613,28 +616,6 @@
   function closeModal(e) {
     if (e.target === document.getElementById("resultModal"))
       document.getElementById("resultModal").classList.remove("open");
-  }
-
-  function showResultModal(decision, firstName, lastName, address, rebateType, rebateValue) {
-    const icon = document.getElementById("modalIcon");
-    const body = document.getElementById("modalBody");
-
-    if (decision === "Approved") {
-      icon.textContent = "✅";
-      const rebateText = rebateType === "Percentage"
-        ? `${rebateValue}%`
-        : `$${rebateValue}`;
-      body.innerHTML = `Congratulations, <strong>${firstName} ${lastName}</strong><br>
-        <strong>${address}</strong><br><br>
-        You have been accepted into the program and you will receive a rebate of <strong>${rebateText}</strong>.`;
-    } else {
-      icon.textContent = "❌";
-      body.innerHTML = `We regret to inform you that <strong>${firstName} ${lastName}</strong><br>
-        <strong>${address}</strong><br><br>
-        has not been accepted into the program.`;
-    }
-
-    document.getElementById("resultModal").classList.add("open");
   }
 
   // Other renovation toggle
@@ -765,14 +746,7 @@
 
     try {
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
-      showResultModal(
-        decision,
-        document.getElementById("firstName").value,
-        document.getElementById("lastName").value,
-        `${document.getElementById("street").value}, ${document.getElementById("city").value}, ${document.getElementById("state").value} ${document.getElementById("zip").value}`,
-        document.querySelector('input[name="rebateType"]:checked')?.value ?? "Percentage",
-        document.getElementById("rebateValue").value || "0"
-      );
+      document.getElementById("resultModal").classList.add("open");
       form.reset();
       document.getElementById("file-list").textContent = "";
       // reset conditional visibility
