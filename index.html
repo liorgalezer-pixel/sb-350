@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SB 350 Program Application</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f0f4f8;
+      color: #1e2d3d;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a3a5c;
+      color: white;
+      padding: 18px 24px;
+    }
+
+    header h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    header p {
+      font-size: 0.82rem;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 36px auto;
+      padding: 0 16px 60px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a3a5c;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .row.single { grid-template-columns: 1fr; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    select,
+    textarea {
+      border: 1px solid #d1d5db;
+      border-radius: 5px;
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: #1e2d3d;
+      background: #fafafa;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #1a3a5c;
+      background: white;
+    }
+
+    .prefix-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d1d5db;
+      border-radius: 5px;
+      background: #fafafa;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .prefix-wrap:focus-within { border-color: #1a3a5c; background: white; }
+    .prefix-wrap span {
+      padding: 9px 10px;
+      color: #6b7280;
+      font-size: 0.9rem;
+      border-right: 1px solid #d1d5db;
+      background: #f3f4f6;
+      user-select: none;
+    }
+    .prefix-wrap input {
+      border: none;
+      background: transparent;
+      padding: 9px 12px;
+      flex: 1;
+    }
+    .prefix-wrap input:focus { background: transparent; }
+
+    /* Toggle yes/no */
+    .toggle-group {
+      display: flex;
+      gap: 0;
+      border: 1px solid #d1d5db;
+      border-radius: 5px;
+      overflow: hidden;
+      width: fit-content;
+    }
+    .toggle-group label {
+      padding: 8px 22px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #f3f4f6;
+      color: #6b7280;
+      transition: background 0.12s, color 0.12s;
+      user-select: none;
+    }
+    .toggle-group input[type="radio"] { display: none; }
+    .toggle-group input[type="radio"]:checked + label {
+      background: #1a3a5c;
+      color: white;
+    }
+
+    .conditional {
+      margin-top: 12px;
+      display: none;
+    }
+    .conditional.visible { display: block; }
+
+    /* File upload */
+    .file-upload {
+      border: 2px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .file-upload:hover { border-color: #1a3a5c; }
+    .file-upload input { display: none; }
+    .file-upload p { font-size: 0.82rem; color: #6b7280; margin-top: 4px; }
+    .file-upload .icon { font-size: 1.6rem; }
+    #file-list { margin-top: 10px; font-size: 0.8rem; color: #374151; }
+
+    /* Advanced settings accordion */
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      color: #1a3a5c;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 14px 0;
+    }
+    .accordion-header .chevron {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      transition: transform 0.2s;
+      color: #6b7280;
+    }
+    .accordion-header.open .chevron { transform: rotate(90deg); }
+    .accordion-body { display: none; padding-top: 4px; }
+    .accordion-body.open { display: block; }
+
+    /* Radio styled */
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    .radio-option input[type="radio"] { accent-color: #1a3a5c; }
+
+    .spacer { height: 12px; }
+
+    /* Submit */
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #1a3a5c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: background 0.15s;
+      margin-top: 8px;
+    }
+    .submit-btn:hover { background: #15304e; }
+    .submit-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    .success-msg {
+      display: none;
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+      color: #065f46;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .error-msg {
+      display: none;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    .divider { height: 1px; background: #e2e8f0; margin: 16px 0; }
+
+    @media (max-width: 560px) {
+      .row { grid-template-columns: 1fr; }
+      .card { padding: 20px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SB 350 Clean Energy Program — Application</h1>
+  <p>Clean Energy and Pollution Reduction Act &nbsp;|&nbsp; Program Application Form</p>
+</header>
+
+<div class="container">
+  <form id="appForm" novalidate>
+
+    <!-- Personal Information -->
+    <div class="card">
+      <div class="section-title">Personal Information</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="firstName">First Name *</label>
+          <input type="text" id="firstName" name="firstName" required placeholder="John" />
+        </div>
+        <div class="field">
+          <label for="lastName">Last Name *</label>
+          <input type="text" id="lastName" name="lastName" required placeholder="Smith" />
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div class="field">
+          <label for="age">Age *</label>
+          <input type="number" id="age" name="age" required min="18" max="120" placeholder="e.g. 35" />
+        </div>
+        <div class="field"></div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row single">
+        <div class="field">
+          <label for="street">Street Address *</label>
+          <input type="text" id="street" name="street" required placeholder="123 Main St" />
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div class="field">
+          <label for="city">City *</label>
+          <input type="text" id="city" name="city" required placeholder="Los Angeles" />
+        </div>
+        <div class="field">
+          <label for="state">State *</label>
+          <input type="text" id="state" name="state" required placeholder="CA" maxlength="2" />
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div class="field">
+          <label for="zip">ZIP Code *</label>
+          <input type="text" id="zip" name="zip" required placeholder="90001" maxlength="10" />
+        </div>
+        <div class="field"></div>
+      </div>
+    </div>
+
+    <!-- Renovation -->
+    <div class="card">
+      <div class="section-title">Renovation Details</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="renovationType">Type of Renovation *</label>
+          <select id="renovationType" name="renovationType" required onchange="onRenovationChange()">
+            <option value="">— Select —</option>
+            <option value="Solar">Solar Panels</option>
+            <option value="HVAC">HVAC System</option>
+            <option value="Insulation">Insulation</option>
+            <option value="Windows/Doors">Windows / Doors</option>
+            <option value="Kitchen">Kitchen Remodel</option>
+            <option value="Bathroom">Bathroom Remodel</option>
+            <option value="Flooring">Flooring</option>
+            <option value="Landscape">Landscape</option>
+            <option value="Tankless Water Heater">Tankless Water Heater</option>
+            <option value="Roof">Roof</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field"></div>
+      </div>
+
+      <div class="conditional" id="otherRenovationWrap" style="margin-top:12px;">
+        <div class="field">
+          <label for="otherRenovation">Please describe the renovation *</label>
+          <input type="text" id="otherRenovation" name="otherRenovation" placeholder="Describe the type of renovation…" />
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="field">
+        <label>Property Photos (optional)</label>
+        <div class="file-upload" onclick="document.getElementById('photoUpload').click()">
+          <div class="icon">📷</div>
+          <strong style="font-size:0.88rem;">Click to upload photos</strong>
+          <p>JPG, PNG, HEIC — multiple files accepted</p>
+          <input type="file" id="photoUpload" name="photos" multiple accept="image/*" onchange="updateFileList(this)" />
+        </div>
+        <div id="file-list"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title" style="margin-top:4px;">Estimated Utility Savings (Monthly)</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="utilWater">Water</label>
+          <div class="prefix-wrap">
+            <span>$</span>
+            <input type="number" id="utilWater" name="utilWater" min="0" placeholder="0" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="utilElectric">Electric</label>
+          <div class="prefix-wrap">
+            <span>$</span>
+            <input type="number" id="utilElectric" name="utilElectric" min="0" placeholder="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <div class="field">
+          <label for="utilGas">Gas</label>
+          <div class="prefix-wrap">
+            <span>$</span>
+            <input type="number" id="utilGas" name="utilGas" min="0" placeholder="0" />
+          </div>
+        </div>
+        <div class="field"></div>
+      </div>
+    </div>
+
+    <!-- Finance -->
+    <div class="card">
+      <div class="section-title">Finance</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="creditScore">Credit Score *</label>
+          <input type="number" id="creditScore" name="creditScore" required min="300" max="850" placeholder="e.g. 720" />
+        </div>
+        <div class="field">
+          <label for="monthlyIncome">Monthly Income *</label>
+          <div class="prefix-wrap">
+            <span>$</span>
+            <input type="number" id="monthlyIncome" name="monthlyIncome" required min="0" placeholder="5,000" />
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Home Loan -->
+      <div class="field">
+        <label>Do you have a home loan?</label>
+        <div class="toggle-group">
+          <input type="radio" name="homeLoan" id="homeLoanNo" value="No" checked />
+          <label for="homeLoanNo">No</label>
+          <input type="radio" name="homeLoan" id="homeLoanYes" value="Yes" />
+          <label for="homeLoanYes">Yes</label>
+        </div>
+        <div class="conditional" id="homeLoanConditional">
+          <div class="field" style="margin-top:10px;">
+            <label for="homeLoanPayment">Monthly Loan Payment *</label>
+            <div class="prefix-wrap">
+              <span>$</span>
+              <input type="number" id="homeLoanPayment" name="homeLoanPayment" min="0" placeholder="1,200" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Credit Card Debt -->
+      <div class="field">
+        <label>Do you have credit card debt?</label>
+        <div class="toggle-group">
+          <input type="radio" name="creditCardDebt" id="ccDebtNo" value="No" checked />
+          <label for="ccDebtNo">No</label>
+          <input type="radio" name="creditCardDebt" id="ccDebtYes" value="Yes" />
+          <label for="ccDebtYes">Yes</label>
+        </div>
+        <div class="conditional" id="ccDebtConditional">
+          <div class="field" style="margin-top:10px;">
+            <label for="ccDebtPayment">Monthly Credit Card Payment *</label>
+            <div class="prefix-wrap">
+              <span>$</span>
+              <input type="number" id="ccDebtPayment" name="ccDebtPayment" min="0" placeholder="300" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Notes -->
+    <div class="card">
+      <div class="section-title">Project Notes</div>
+      <div class="field">
+        <label for="projectNotes">Additional details about the project (optional)</label>
+        <textarea id="projectNotes" name="projectNotes" rows="5" placeholder="Describe the project, special requirements, timeline, or any other relevant information…" style="resize:vertical;"></textarea>
+      </div>
+    </div>
+
+    <!-- Advanced Settings accordion -->
+    <div class="card">
+      <div class="accordion-header" id="advancedToggle" onclick="toggleAccordion()">
+        <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 3 11 8 6 13"/>
+        </svg>
+        Advanced Settings
+      </div>
+      <div class="accordion-body" id="advancedBody">
+
+        <div class="divider" style="margin-top:0;"></div>
+
+        <!-- Decision -->
+        <div class="field">
+          <label>Application Decision</label>
+          <div class="radio-group" style="margin-top:6px;">
+            <label class="radio-option">
+              <input type="radio" name="decision" value="Approved" checked onchange="onDecisionChange()" />
+              Approved
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="decision" value="Declined" onchange="onDecisionChange()" />
+              Declined
+            </label>
+          </div>
+        </div>
+
+        <!-- Rebate (shown only if Approved) -->
+        <div id="rebateSection" style="margin-top:16px;">
+          <div class="field">
+            <label>Rebate Type</label>
+            <div class="radio-group" style="margin-top:6px;">
+              <label class="radio-option">
+                <input type="radio" name="rebateType" id="rebatePct" value="Percentage" checked onchange="updateRebateLabel()" />
+                Percentage (%)
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="rebateType" id="rebateDollar" value="Dollar Amount" onchange="updateRebateLabel()" />
+                Dollar Amount ($)
+              </label>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="field">
+            <label for="rebateValue" id="rebateLabel">Rebate Amount (%)</label>
+            <div class="prefix-wrap" id="rebatePrefix">
+              <span id="rebatePrefixSymbol">%</span>
+              <input type="number" id="rebateValue" name="rebateValue" min="0" placeholder="e.g. 30" />
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Notification email -->
+        <div class="field">
+          <label for="notifyEmail">Send Submission To (Email) *</label>
+          <input type="email" id="notifyEmail" name="notifyEmail" placeholder="you@example.com" />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
+    <div class="success-msg" id="successMsg">✅ Application submitted successfully. A copy has been sent to the configured email address.</div>
+    <div class="error-msg" id="errorMsg" id="errorMsg"></div>
+
+  </form>
+</div>
+
+<script>
+  // ── EmailJS configuration ──────────────────────────────────────────────
+  // TODO: Replace these three values with your own from emailjs.com
+  const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";
+  const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";
+  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+  // ──────────────────────────────────────────────────────────────────────
+
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+  // Other renovation toggle
+  function onRenovationChange() {
+    const val = document.getElementById("renovationType").value;
+    const wrap = document.getElementById("otherRenovationWrap");
+    const inp  = document.getElementById("otherRenovation");
+    if (val === "Other") {
+      wrap.classList.add("visible");
+      inp.required = true;
+    } else {
+      wrap.classList.remove("visible");
+      inp.required = false;
+      inp.value = "";
+    }
+  }
+
+  // Accordion
+  function toggleAccordion() {
+    const header = document.getElementById("advancedToggle");
+    const body   = document.getElementById("advancedBody");
+    header.classList.toggle("open");
+    body.classList.toggle("open");
+  }
+
+  // Show/hide home loan conditional
+  document.querySelectorAll('input[name="homeLoan"]').forEach(r => {
+    r.addEventListener("change", () => {
+      const c = document.getElementById("homeLoanConditional");
+      const inp = document.getElementById("homeLoanPayment");
+      if (r.value === "Yes" && r.checked) {
+        c.classList.add("visible");
+        inp.required = true;
+      } else if (r.value === "No" && r.checked) {
+        c.classList.remove("visible");
+        inp.required = false;
+        inp.value = "";
+      }
+    });
+  });
+
+  // Show/hide credit card debt conditional
+  document.querySelectorAll('input[name="creditCardDebt"]').forEach(r => {
+    r.addEventListener("change", () => {
+      const c = document.getElementById("ccDebtConditional");
+      const inp = document.getElementById("ccDebtPayment");
+      if (r.value === "Yes" && r.checked) {
+        c.classList.add("visible");
+        inp.required = true;
+      } else if (r.value === "No" && r.checked) {
+        c.classList.remove("visible");
+        inp.required = false;
+        inp.value = "";
+      }
+    });
+  });
+
+  // Show/hide rebate section based on decision
+  function onDecisionChange() {
+    const decision = document.querySelector('input[name="decision"]:checked').value;
+    document.getElementById("rebateSection").style.display = decision === "Approved" ? "block" : "none";
+  }
+
+  // Update rebate prefix/label when rebate type changes
+  function updateRebateLabel() {
+    const isPct = document.getElementById("rebatePct").checked;
+    document.getElementById("rebateLabel").textContent = isPct ? "Rebate Amount (%)" : "Rebate Amount ($)";
+    document.getElementById("rebatePrefixSymbol").textContent = isPct ? "%" : "$";
+  }
+
+  // File list preview
+  function updateFileList(input) {
+    const list = document.getElementById("file-list");
+    if (input.files.length === 0) { list.textContent = ""; return; }
+    const names = Array.from(input.files).map(f => f.name).join(", ");
+    list.textContent = `📎 ${input.files.length} file(s): ${names}`;
+  }
+
+  // Form submission
+  document.getElementById("appForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const form = e.target;
+
+    // Basic HTML5 validation
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const notifyEmail = document.getElementById("notifyEmail").value.trim();
+    if (!notifyEmail) {
+      alert("Please enter a notification email in Advanced Settings before submitting.");
+      document.getElementById("advancedToggle").classList.add("open");
+      document.getElementById("advancedBody").classList.add("open");
+      document.getElementById("notifyEmail").focus();
+      return;
+    }
+
+    const decision    = document.querySelector('input[name="decision"]:checked').value;
+    const rebateType  = document.querySelector('input[name="rebateType"]:checked')?.value ?? "N/A";
+    const rebateValue = document.getElementById("rebateValue").value || "N/A";
+    const homeLoan    = document.querySelector('input[name="homeLoan"]:checked').value;
+    const ccDebt      = document.querySelector('input[name="creditCardDebt"]:checked').value;
+
+    const params = {
+      to_email:         notifyEmail,
+      age:              document.getElementById("age").value,
+      first_name:       document.getElementById("firstName").value,
+      last_name:        document.getElementById("lastName").value,
+      address:          `${document.getElementById("street").value}, ${document.getElementById("city").value}, ${document.getElementById("state").value} ${document.getElementById("zip").value}`,
+      renovation_type:  document.getElementById("renovationType").value === "Other"
+                          ? `Other — ${document.getElementById("otherRenovation").value}`
+                          : document.getElementById("renovationType").value,
+      util_water:       `$${document.getElementById("utilWater").value || "0"}`,
+      util_electric:    `$${document.getElementById("utilElectric").value || "0"}`,
+      util_gas:         `$${document.getElementById("utilGas").value || "0"}`,
+      credit_score:     document.getElementById("creditScore").value,
+      monthly_income:   `$${document.getElementById("monthlyIncome").value}`,
+      home_loan:        homeLoan,
+      home_loan_payment: homeLoan === "Yes" ? `$${document.getElementById("homeLoanPayment").value}` : "N/A",
+      credit_card_debt: ccDebt,
+      cc_debt_payment:  ccDebt === "Yes" ? `$${document.getElementById("ccDebtPayment").value}` : "N/A",
+      project_notes:    document.getElementById("projectNotes").value || "N/A",
+      decision:         decision,
+      rebate_type:      decision === "Approved" ? rebateType : "N/A",
+      rebate_value:     decision === "Approved" ? rebateValue : "N/A",
+    };
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Submitting…";
+    document.getElementById("successMsg").style.display = "none";
+    document.getElementById("errorMsg").style.display = "none";
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+      document.getElementById("successMsg").style.display = "block";
+      form.reset();
+      document.getElementById("file-list").textContent = "";
+      // reset conditional visibility
+      document.getElementById("homeLoanConditional").classList.remove("visible");
+      document.getElementById("ccDebtConditional").classList.remove("visible");
+      document.getElementById("rebateSection").style.display = "block";
+    } catch (err) {
+      const errEl = document.getElementById("errorMsg");
+      errEl.textContent = `❌ Failed to send: ${err?.text || JSON.stringify(err)}. Check your EmailJS configuration in the HTML file.`;
+      errEl.style.display = "block";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Submit Application";
+    }
+  });
+</script>
+</body>
+</html>
