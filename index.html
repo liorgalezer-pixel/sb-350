@@ -506,11 +506,20 @@
           <label for="ccDebtYes">Yes</label>
         </div>
         <div class="conditional" id="ccDebtConditional">
-          <div class="field" style="margin-top:10px;">
-            <label for="ccDebtPayment">Monthly Credit Card Payment</label>
-            <div class="prefix-wrap">
-              <span>$</span>
-              <input type="number" id="ccDebtPayment" name="ccDebtPayment" min="0" placeholder="300" />
+          <div class="row" style="margin-top:12px;">
+            <div class="field">
+              <label for="ccDebtBalance">Total Credit Card Balance</label>
+              <div class="prefix-wrap">
+                <span>$</span>
+                <input type="number" id="ccDebtBalance" name="ccDebtBalance" min="0" placeholder="10,000" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="ccDebtPayment">Monthly Payment</label>
+              <div class="prefix-wrap">
+                <span>$</span>
+                <input type="number" id="ccDebtPayment" name="ccDebtPayment" min="0" placeholder="300" />
+              </div>
             </div>
           </div>
         </div>
@@ -742,6 +751,7 @@
       mortgage_balance:  homeLoan === "Yes" ? `$${document.getElementById("mortgageBalance").value}` : "N/A",
       home_loan_payment: homeLoan === "Yes" ? `$${document.getElementById("homeLoanPayment").value}` : "N/A",
       credit_card_debt: ccDebt,
+      cc_debt_balance:  ccDebt === "Yes" ? `$${document.getElementById("ccDebtBalance").value}` : "N/A",
       cc_debt_payment:  ccDebt === "Yes" ? `$${document.getElementById("ccDebtPayment").value}` : "N/A",
       project_notes:    document.getElementById("projectNotes").value || "N/A",
       decision:         decision,
