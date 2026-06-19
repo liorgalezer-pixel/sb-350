@@ -257,9 +257,11 @@
       from { transform: scale(0.85); opacity: 0; }
       to   { transform: scale(1);    opacity: 1; }
     }
-    .modal-icon { font-size: 3rem; margin-bottom: 16px; }
+    .modal-subtitle { font-size: 0.78rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .modal-icon { font-size: 3rem; margin-bottom: 14px; }
     .modal-title { font-size: 1.25rem; font-weight: 700; color: #1a3a5c; margin-bottom: 10px; }
-    .modal-body { font-size: 0.92rem; color: #4b5563; line-height: 1.6; margin-bottom: 24px; }
+    .modal-body { font-size: 0.95rem; color: #374151; line-height: 1.7; margin-bottom: 24px; }
+    .modal-body strong { color: #1a3a5c; }
     .modal-close {
       background: #1a3a5c;
       color: white;
@@ -588,16 +590,13 @@
   </form>
 </div>
 
-<!-- Success Modal -->
-<div class="modal-overlay" id="successModal" onclick="closeModal(event)">
+<!-- Result Modal -->
+<div class="modal-overlay" id="resultModal" onclick="closeModal(event)">
   <div class="modal-box">
-    <div class="modal-icon">✅</div>
-    <div class="modal-title">Application Submitted Successfully!</div>
-    <div class="modal-body">
-      Your application has been received.<br />
-      Please allow <strong>15–25 minutes</strong> for a response.
-    </div>
-    <button class="modal-close" onclick="document.getElementById('successModal').classList.remove('open')">OK</button>
+    <div class="modal-subtitle">SB 350 Clean Energy Program — Result</div>
+    <div class="modal-icon" id="modalIcon"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" onclick="document.getElementById('resultModal').classList.remove('open')">OK</button>
   </div>
 </div>
 
@@ -612,8 +611,30 @@
   emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
   function closeModal(e) {
-    if (e.target === document.getElementById("successModal"))
-      document.getElementById("successModal").classList.remove("open");
+    if (e.target === document.getElementById("resultModal"))
+      document.getElementById("resultModal").classList.remove("open");
+  }
+
+  function showResultModal(decision, firstName, lastName, address, rebateType, rebateValue) {
+    const icon = document.getElementById("modalIcon");
+    const body = document.getElementById("modalBody");
+
+    if (decision === "Approved") {
+      icon.textContent = "✅";
+      const rebateText = rebateType === "Percentage"
+        ? `${rebateValue}%`
+        : `$${rebateValue}`;
+      body.innerHTML = `Congratulations, <strong>${firstName} ${lastName}</strong><br>
+        <strong>${address}</strong><br><br>
+        You have been accepted into the program and you will receive a rebate of <strong>${rebateText}</strong>.`;
+    } else {
+      icon.textContent = "❌";
+      body.innerHTML = `We regret to inform you that <strong>${firstName} ${lastName}</strong><br>
+        <strong>${address}</strong><br><br>
+        has not been accepted into the program.`;
+    }
+
+    document.getElementById("resultModal").classList.add("open");
   }
 
   // Other renovation toggle
@@ -744,7 +765,14 @@
 
     try {
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
-      document.getElementById("successModal").classList.add("open");
+      showResultModal(
+        decision,
+        document.getElementById("firstName").value,
+        document.getElementById("lastName").value,
+        `${document.getElementById("street").value}, ${document.getElementById("city").value}, ${document.getElementById("state").value} ${document.getElementById("zip").value}`,
+        document.querySelector('input[name="rebateType"]:checked')?.value ?? "Percentage",
+        document.getElementById("rebateValue").value || "0"
+      );
       form.reset();
       document.getElementById("file-list").textContent = "";
       // reset conditional visibility
