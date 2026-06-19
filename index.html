@@ -608,7 +608,8 @@
   // TODO: Replace these three values with your own from emailjs.com
   const EMAILJS_PUBLIC_KEY  = "mVwZJqZkxJ-63JgBT";
   const EMAILJS_SERVICE_ID  = "service_jx54ihe";
-  const EMAILJS_TEMPLATE_ID = "template_1att6i9";
+  const EMAILJS_TEMPLATE_ID_APPROVED = "template_1att6i9";
+  const EMAILJS_TEMPLATE_ID_DECLINED = "template_49ci6ww";
   // ──────────────────────────────────────────────────────────────────────
 
   emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
@@ -745,7 +746,8 @@
     document.getElementById("errorMsg").style.display = "none";
 
     try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+      const templateId = decision === "Approved" ? EMAILJS_TEMPLATE_ID_APPROVED : EMAILJS_TEMPLATE_ID_DECLINED;
+      await emailjs.send(EMAILJS_SERVICE_ID, templateId, params);
       document.getElementById("resultModal").classList.add("open");
       form.reset();
       document.getElementById("file-list").textContent = "";
