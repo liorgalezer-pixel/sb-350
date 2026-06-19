@@ -465,9 +465,9 @@
 
       <div class="divider"></div>
 
-      <!-- Home Loan -->
+      <!-- Mortgage -->
       <div class="field">
-        <label>Do you have a home loan?</label>
+        <label>Do you have a mortgage?</label>
         <div class="toggle-group">
           <input type="radio" name="homeLoan" id="homeLoanNo" value="No" checked />
           <label for="homeLoanNo">No</label>
@@ -475,11 +475,20 @@
           <label for="homeLoanYes">Yes</label>
         </div>
         <div class="conditional" id="homeLoanConditional">
-          <div class="field" style="margin-top:10px;">
-            <label for="homeLoanPayment">Monthly Loan Payment</label>
-            <div class="prefix-wrap">
-              <span>$</span>
-              <input type="number" id="homeLoanPayment" name="homeLoanPayment" min="0" placeholder="1,200" />
+          <div class="row" style="margin-top:12px;">
+            <div class="field">
+              <label for="mortgageBalance">Mortgage Balance</label>
+              <div class="prefix-wrap">
+                <span>$</span>
+                <input type="number" id="mortgageBalance" name="mortgageBalance" min="0" placeholder="250,000" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="homeLoanPayment">Monthly Payment</label>
+              <div class="prefix-wrap">
+                <span>$</span>
+                <input type="number" id="homeLoanPayment" name="homeLoanPayment" min="0" placeholder="1,200" />
+              </div>
             </div>
           </div>
         </div>
@@ -730,6 +739,7 @@
       credit_score:     document.getElementById("creditScore").value,
       monthly_income:   `$${document.getElementById("monthlyIncome").value}`,
       home_loan:        homeLoan,
+      mortgage_balance:  homeLoan === "Yes" ? `$${document.getElementById("mortgageBalance").value}` : "N/A",
       home_loan_payment: homeLoan === "Yes" ? `$${document.getElementById("homeLoanPayment").value}` : "N/A",
       credit_card_debt: ccDebt,
       cc_debt_payment:  ccDebt === "Yes" ? `$${document.getElementById("ccDebtPayment").value}` : "N/A",
